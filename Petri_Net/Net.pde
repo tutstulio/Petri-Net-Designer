@@ -17,11 +17,11 @@ class Net
   
   void display()
   {
-    
+    ;
   }
   
   void run()
   {
-    
+    ;
   }
 }

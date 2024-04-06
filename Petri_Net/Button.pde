@@ -1,29 +1,39 @@
 public class Button
 {
-  PVector pos; 
+  PVector p;
   float L;
   color bg = color(0, 140, 0);
-  color arrow = color(250);
   color bgPress = color(0, 180, 0);
+  color arrow = color(250);
   boolean mouseOn = false;
 
   Button(float x, float y, float l)
   {
-    pos = new PVector(x, y);
+    p = new PVector(x, y);
     L = l;
   }
 
-  boolean mouseOn(int x, int y)
+  boolean mouseOn(float x, float y)
   {
-    if (x >= pos.x - L/2 && x <= pos.x + L/2)
-      if (y <= pos.y + L/2 && y >= pos.y - L/2)
-        return true;
+    if ((x >= p.x) && (x <= p.x + L) && (y >= p.y) && (y <= p.y + L))
+      return true;
 
     return false;
   }
+
+  void display()
+  {
+    if (mouseOn(mouseX, mouseY))
+      fill(bgPress);
+    else
+      fill(bg);
+
+    noStroke();
+    rect(p.x, p.y, L, L);
+  }
 }
 
-class UpArrow extends Button
+/*class UpArrow extends Button
 {
 
   UpArrow(float x, float y, float l)
@@ -40,49 +50,17 @@ class UpArrow extends Button
     else
       fill(bg);
 
-    rect(pos.x, pos.y, L, L);
+    rect(p.x, p.y, L, L);
 
     fill(arrow);
     beginShape();
-    vertex(pos.x-L/9, pos.y+L/3);
-    vertex(pos.x+L/9, pos.y+L/3);
-    vertex(pos.x+L/9, pos.y-L/9);
-    vertex(pos.x+L/5, pos.y-L/9);
-    vertex(pos.x, pos.y-L/3);
-    vertex(pos.x-L/5, pos.y-L/9);
-    vertex(pos.x-L/9, pos.y-L/9);
+    vertex(p.x-L/9, p.y+L/3);
+    vertex(p.x+L/9, p.y+L/3);
+    vertex(p.x+L/9, p.y-L/9);
+    vertex(p.x+L/5, p.y-L/9);
+    vertex(p.x, p.y-L/3);
+    vertex(p.x-L/5, p.y-L/9);
+    vertex(p.x-L/9, p.y-L/9);
     endShape();
   }
-}
-
-class DownArrow extends Button
-{
-
-  DownArrow(float x, float y, float l)
-  {
-    super(x, y, l);
-  }
-
-  void display()
-  {
-    noStroke();
-
-    if (mouseOn(mouseX, mouseY))
-      fill(bgPress);
-    else
-      fill(bg);
-
-    rect(pos.x, pos.y, L, L);
-
-    fill(arrow);
-    beginShape();
-    vertex(pos.x-L/9, pos.y-L/3);
-    vertex(pos.x+L/9, pos.y-L/3);
-    vertex(pos.x+L/9, pos.y+L/9);
-    vertex(pos.x+L/5, pos.y+L/9);
-    vertex(pos.x, pos.y+L/3);
-    vertex(pos.x-L/5, pos.y+L/9);
-    vertex(pos.x-L/9, pos.y+L/9);
-    endShape();
-  }
-}
+}*/

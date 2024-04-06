@@ -2,11 +2,8 @@
 
 UserInterface ui;
 Net petri;
-/*Position p1, p2;
-Transition t1;
-Arch a1;*/
 
-boolean running, pause;
+boolean running, paused, editing;
 
 // ======================================================================== SETUP
 
@@ -14,11 +11,9 @@ void setup()
 {
   size(800, 600);
   running = false;
+  editing = false;
+  ui = new UserInterface();
   petri = new Net();
-  /*p1 = new Position(100, 100, 0);
-  p2 = new Position(200, 200, 0);
-  t1 = new Transition(300, 300);
-  a1 = new Arch(200, 200, 300, 300, 1);*/
 }
 
 // ======================================================================== LOOP
@@ -27,26 +22,23 @@ void draw()
 {
   if (running)  // simulation mode
   {
-    if (pause)
+    if (paused)
     {
-      while(key != 'p' && key != 'P')
+      while (key != 'p' && key != 'P')
         text("Press P to continue", width/2, height/2);
       delay(250);
     } else
     {
-      background(25);
-      petri.run();
-      petri.display();
+      background(200);
+      ui.display();
+      //petri.run();
+      //petri.display();
     }
   } else  // editing mode
   {
     background(25);
     ui.display();
-    petri.display();
-    /*a1.display();
-    p1.display();
-    p2.display();
-    t1.display();*/
+    //petri.display();
   }
 }
 
@@ -54,12 +46,24 @@ void draw()
 
 void mousePressed()
 {
-  /*if (up.mouseOn(mouseX, mouseY))
-   res += 0.1;
-   else if (down.mouseOn(mouseX, mouseY))
-   res -= 0.1;
-   
-   for (TextBox i : tb) {
+  PVector mouse = new PVector(mouseX, mouseY);
+  
+  if (ui.simulate.mouseOn(mouse.x, mouse.y) && !editing)
+    running = true;
+  else if (ui.stop.mouseOn(mouse.x, mouse.y))
+    running = false;
+  else if (ui.add_pos.mouseOn(mouse.x, mouse.y) && !running)
+  {
+    // drag state until click somewhere to add position to net or press ESC
+    editing = true;
+    //petri.add(new Position(mouse.x, mouse.y, 0));
+  }
+  else
+  {
+    editing = false;
+  }
+
+  /*for (TextBox i : tb) {
    if (i.mouseOn(mouseX, mouseY))
    i.selected = true;
    else
