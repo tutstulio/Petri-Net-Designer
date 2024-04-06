@@ -75,11 +75,11 @@ void mousePressed()
 {
   PVector mouse = new PVector(mouseX, mouseY);
 
-  if (ui.simulate.mouseOn(mouse.x, mouse.y) && !editing)
+  if (ui.simulate.mouseOn(mouse.x, mouse.y) && !editing)  // simulate button pressed
     running = true;
-  else if (ui.stop.mouseOn(mouse.x, mouse.y))
+  else if (ui.stop.mouseOn(mouse.x, mouse.y))  // stop button pressed
     running = false;
-  else if (ui.add_pos.mouseOn(mouse.x, mouse.y) && !running)
+  else if (ui.add_pos.mouseOn(mouse.x, mouse.y) && !running)  // add position button pressed
   {
     // drag state until click somewhere to add position to net or press ESC
     editing = true;
@@ -88,16 +88,15 @@ void mousePressed()
     archSelected = false;
     dragging = true;
     petri.add(new Position(mouse.x, mouse.y, 0));
-  } else if (ui.add_trans.mouseOn(mouse.x, mouse.y) && !running)
+  } else if (ui.add_trans.mouseOn(mouse.x, mouse.y) && !running)  // add transition button pressed
   {
-    // drag state until click somewhere to add position to net or press ESC
     editing = true;
     posSelected = false;
     transSelected = true;
     archSelected = false;
     dragging = true;
     petri.add(new Transition(mouse.x, mouse.y));
-  } else if (ui.add_arch.mouseOn(mouse.x, mouse.y) && !running)
+  } else if (ui.add_arch.mouseOn(mouse.x, mouse.y) && !running)  // add arch button pressed
   {
     editing = true;
     posSelected = false;
@@ -105,13 +104,21 @@ void mousePressed()
     archSelected = true;
     dragging = true;
     petri.add(new Arch(mouse.x, mouse.y, mouse.x+30, mouse.y+30, 1));
-  } else  // click anywhere
+  } else  // click anywhere on the screen
   {
-    editing = false;
     posSelected = false;
     transSelected = false;
+    editing = false;
     archSelected = false;
     dragging = false;
+    
+    for (Position p : petri.P)
+      if (p.mouseOn(mouse.x, mouse.y))
+        print("Ta dentro\n");
+        
+    for (Transition t : petri.T)
+      if (t.mouseOn(mouse.x, mouse.y))
+        print("Chuma a chumeruuu\n");
   }
 
   /*for (TextBox i : tb) {
