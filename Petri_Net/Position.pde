@@ -4,7 +4,7 @@ class Position
   PVector p;
   int marks;
   
-  Position(int x, int y, int m)
+  Position(float x, float y, int m)
   {
     this.p = new PVector(x, y);
     this.marks = m;
@@ -14,6 +14,7 @@ class Position
   
   public void display()
   {
+    noStroke();
     fill(150, 0, 0);
     circle(p.x, p.y, 50);
   }
@@ -23,7 +24,7 @@ class Position
     marks = m;
   }
   
-  public void set_position(int x, int y)
+  public void set_position(float x, float y)
   {
     p.x = x;
     p.y = y;

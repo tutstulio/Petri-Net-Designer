@@ -17,11 +17,39 @@ class Net
   
   void display()
   {
-    ;
+    for (Arch a : A)
+    {
+      a.display();
+    }
+    
+    for (Position p : P)
+    {
+      p.display();
+    }
+    
+    for (Transition t : T)
+    {
+      t.display();
+    }
   }
   
   void run()
   {
     ;
+  }
+  
+  void add(Position p)
+  {
+    P.add(p);
+  }
+  
+  void add(Transition t)
+  {
+    T.add(t);
+  }
+  
+  void add(Arch a)
+  {
+    A.add(a);
   }
 }

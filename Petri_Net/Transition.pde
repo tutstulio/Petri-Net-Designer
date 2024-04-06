@@ -4,7 +4,7 @@ class Transition
   PVector p;
   boolean trig;
 
-  Transition(int x, int y)
+  Transition(float x, float y)
   {
     this.p = new PVector(x, y);
     this.trig = false;
@@ -14,6 +14,7 @@ class Transition
 
   public void display()
   {
+    noStroke();
     fill(255);
     rectMode(CENTER);
     rect(p.x, p.y, 10, 50);
@@ -24,7 +25,7 @@ class Transition
     trig = true;
   }
 
-  public void set_position(int x, int y)
+  public void set_position(float x, float y)
   {
     p.x = x;
     p.y = y;
