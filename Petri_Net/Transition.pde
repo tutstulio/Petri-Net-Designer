@@ -15,9 +15,10 @@ class Transition
     h = 50;
   }
 
-  public void display()
+  public void display(boolean contour)
   {
-    noStroke();
+    if (contour) stroke(0, 255, 0);
+    else noStroke();
     fill(255);
     rectMode(CENTER);
     rect(p.x, p.y, w, h);

@@ -12,11 +12,12 @@ class Position
     this.post_sets = new Transition[0];
   }
   
-  public void display()
+  public void display(boolean contour)
   {
-    noStroke();
+    if (contour) stroke(0, 255, 0);
+    else noStroke();
     fill(150, 0, 0);
-    //ellipseMode(CENTER); -> default
+    ellipseMode(CENTER); // default
     circle(p.x, p.y, radius);
   }
   

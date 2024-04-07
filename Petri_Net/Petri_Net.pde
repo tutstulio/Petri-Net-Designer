@@ -4,7 +4,10 @@ UserInterface ui;
 Net petri;
 
 boolean running, paused, editing, dragging;
-boolean posSelected, transSelected, archSelected;
+boolean posSelecting, transSelecting, archSelecting;
+boolean posSelected[], transSelected[], archSelected[];
+
+int posID, transID;
 
 // ======================================================================== SETUP
 
@@ -22,50 +25,72 @@ void setup()
 
 void draw()
 {
+  posSelected = new boolean[petri.P.size()];
+  transSelected = new boolean[petri.T.size()];
+  archSelected = new boolean[petri.A.size()];
+
+  // BOTA NA CABECA QUE ESTILO NAO EH MARRA
   if (running)  // simulation mode
   {
     if (paused)  // simulation paused
     {
-      while (key != 'p' && key != 'P')
-        text("Press P to continue", width/2, height/2);
-      delay(250);
+      background(200);
+      ui.display();
+      petri.display(posSelected, transSelected);
+      fill(0);
+      text("Press P to continue", width/2, height/2);
     } else      // simulation running
     {
       //petri.run();
       background(200);
       ui.display();
-      petri.display();
+      petri.display(posSelected, transSelected);
     }
-  } else if (editing)  // editing mode on add buttons pressed or net itens pressed
+  }
+
+  // BOTA NA CABECA QUE ESTILO NAO EH MARRA
+  else if (editing)  // editing mode on add buttons pressed or net itens pressed
   {
-    if (posSelected)
+    if (posSelecting)
     {
       if (dragging)
+      {
+        posSelected[petri.P.size()-1] = true;
         petri.P.set(petri.P.size()-1, new Position(mouseX, mouseY, 0));
-      else
-        print("cocozauro");
-    } else if (transSelected)
+      } else
+      {
+        posSelected[posID] = true;
+      }
+    } else if (transSelecting)
     {
       if (dragging)
+      {
+        transSelected[petri.T.size()-1] = true;
         petri.T.set(petri.T.size()-1, new Transition(mouseX, mouseY));
-      else
-        print("pirocossauro");
-    } else if (archSelected)
+      } else
+      {
+        transSelected[transID] = true;
+      }
+    } else if (archSelecting)
     {
       if (dragging)
-        petri.A.set(petri.A.size()-1, new Arch(mouseX, mouseY, mouseX+30, mouseY+30, 1));
-      else
-        print("babacazãossauro");
+        petri.A.set(petri.A.size()-1, new Arch(mouseX, mouseY, mouseX+1, mouseY+1, 1));
+    } else
+    {
+      ;
     }
 
     background(25);
     ui.display();
-    petri.display();
-  } else  // idle mode (default)
+    petri.display(posSelected, transSelected);
+  }
+
+  // BOTA NA CABECA QUE ESTILO NAO EH MARRA
+  else  // idle mode (default)
   {
     background(25);
     ui.display();
-    petri.display();
+    petri.display(posSelected, transSelected);
   }
 }
 
@@ -76,50 +101,69 @@ void mousePressed()
   PVector mouse = new PVector(mouseX, mouseY);
 
   if (ui.simulate.mouseOn(mouse.x, mouse.y) && !editing)  // simulate button pressed
-    running = true;
-  else if (ui.stop.mouseOn(mouse.x, mouse.y))  // stop button pressed
-    running = false;
-  else if (ui.add_pos.mouseOn(mouse.x, mouse.y) && !running)  // add position button pressed
   {
-    // drag state until click somewhere to add position to net or press ESC
+    running = true;
+  } else if (ui.stop.mouseOn(mouse.x, mouse.y))  // stop button pressed
+  {
+    running = false;
+    paused = false;
+  } else if (ui.add_pos.mouseOn(mouse.x, mouse.y) && !running)  // add position button pressed
+  {
+    // drag state until click somewhere to add position to net or press another shit
     editing = true;
-    posSelected = true;
-    transSelected = false;
-    archSelected = false;
+    posSelecting = true;
+    transSelecting = false;
+    archSelecting = false;
     dragging = true;
     petri.add(new Position(mouse.x, mouse.y, 0));
   } else if (ui.add_trans.mouseOn(mouse.x, mouse.y) && !running)  // add transition button pressed
   {
     editing = true;
-    posSelected = false;
-    transSelected = true;
-    archSelected = false;
+    posSelecting = false;
+    transSelecting = true;
+    archSelecting = false;
     dragging = true;
     petri.add(new Transition(mouse.x, mouse.y));
   } else if (ui.add_arch.mouseOn(mouse.x, mouse.y) && !running)  // add arch button pressed
   {
     editing = true;
-    posSelected = false;
-    transSelected = false;
-    archSelected = true;
+    posSelecting = false;
+    transSelecting = false;
+    archSelecting = true;
     dragging = true;
-    petri.add(new Arch(mouse.x, mouse.y, mouse.x+30, mouse.y+30, 1));
+    petri.add(new Arch(mouse.x, mouse.y, mouse.x+1, mouse.y+1, 1));
   } else  // click anywhere on the screen
   {
-    posSelected = false;
-    transSelected = false;
+    posSelecting = false;
+    transSelecting = false;
     editing = false;
-    archSelected = false;
+    archSelecting = false;
     dragging = false;
-    
-    for (Position p : petri.P)
-      if (p.mouseOn(mouse.x, mouse.y))
-        print("Ta dentro\n");
-        
-    for (Transition t : petri.T)
-      if (t.mouseOn(mouse.x, mouse.y))
-        print("Chuma a chumeruuu\n");
   }
+
+  for (Position p : petri.P)
+    if (p.mouseOn(mouse.x, mouse.y) && !dragging && !running)
+    {
+      editing = true;
+      posSelecting = true;
+      transSelecting = false;
+      archSelecting = false;
+      //dragging = false;
+      posID = petri.P.indexOf(p);
+      println(posID);
+    }
+
+  for (Transition t : petri.T)
+    if (t.mouseOn(mouse.x, mouse.y) && !dragging && !running)
+    {
+      editing = true;
+      posSelecting = false;
+      transSelecting = true;
+      archSelecting = false;
+      //dragging = false;
+      transID = petri.T.indexOf(t);
+      println(transID);
+    }
 
   /*for (TextBox i : tb) {
    if (i.mouseOn(mouseX, mouseY))
@@ -131,6 +175,11 @@ void mousePressed()
 
 void keyPressed()
 {
+  char k = key;
+
+  if ((k == 'p' || k == 'P') && running)
+    paused = !paused;
+
   /*for (TextBox i : tb)
    i.write(key, (int)keyCode);*/
 }
