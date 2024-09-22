@@ -1,3 +1,13 @@
+/*
+ *
+ * PRÓXIMOS PASSOS:
+ * - adicionar e remover as marcações
+ * - editar pesos
+ * - fazer as posições e transições reconhecerem seus pre e pos-sets
+ * - partir para a simulação
+ *
+ */
+
 // ======================================================================== MAIN DATA
 
 UserInterface ui;
@@ -94,11 +104,12 @@ void draw()
         {
           Arch a = petri.A.get(petri.A.size()-1);
           petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, mouseX, mouseY, 1));
-        } else
-        {
-          Arch a = petri.A.get(petri.A.size()-1);
-          petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, a.end.x, a.end.y, 1));
         }
+        //else
+        //{
+        //Arch a = petri.A.get(petri.A.size()-1);
+        //petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, a.end.x, a.end.y, 1));
+        //}
       }
     }
     // Selecting none
@@ -127,9 +138,24 @@ void mousePressed()
 {
   // Get mouse coordinates
   PVector mouse = new PVector(mouseX, mouseY);
+  uiEvent(mouse);
+  netEvent(mouse);
+}
 
-  // -------------------- UI INPUTS --------------------
+void keyPressed()
+{
+  char k = key;
 
+  if ((k == 'p' || k == 'P') && running)
+    paused = !paused;
+
+  /*for (TextBox i : tb)
+   i.write(key, (int)keyCode);*/
+}
+
+// -------------------- UI INPUTS --------------------
+void uiEvent (PVector mouse)
+{
   // Simulate button
   if (ui.simulate.mouseOn(mouse.x, mouse.y) && !editing)
   {
@@ -185,9 +211,10 @@ void mousePressed()
       print("Djonga da Mironga\t");
       println(petri.A.size());
     }
-    // The arch start and end points case (issue: n funciona com transição e n volta pro idle se n start)
+    // The arch start and end points case
     else
     {
+      // Scans positions on the screen
       for (Position p : petri.P)
       {
         if (p.mouseOn(mouse.x, mouse.y) && !running)
@@ -204,56 +231,68 @@ void mousePressed()
           {
             petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, p.p.x, p.p.y, 1));
             archEnded = true;
-          } else
+            editing = false;
+            archSelecting = false;
+            dragging = false;
+          }
+          // Drop an arch point anywhere on the screen
+          else
           {
             editing = false;
             archSelecting = false;
             dragging = false;
             archStarted = false;
             archEnded = false;
-            petri.A.remove(petri.A.size()-1);
+            if (isPos) petri.A.remove(petri.A.size()-1);
             print("Nem tchum\t");
             println(petri.A.size());
           }
-        } else
+        }
+      }
+
+      // Scans transitions on the screen
+      for (Transition t : petri.T)
+      {
+        if (t.mouseOn(mouse.x, mouse.y) && !running)
         {
-          for (Transition t : petri.T)
+          Arch a = petri.A.get(petri.A.size()-1);
+          if (!archStarted)
           {
-            if (t.mouseOn(mouse.x, mouse.y) && !running)
-            {
-              Arch a = petri.A.get(petri.A.size()-1);
-              if (!archStarted)
-              {
-                petri.A.set(petri.A.size()-1, new Arch(t.p.x, t.p.y, t.p.x+1, t.p.y+1, 1));
-                archStarted = true;
-                isPos = false;
-                print("TchumT\t");
-                println(petri.A.size());
-              } else if (isPos && !archEnded)
-              {
-                petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, t.p.x, t.p.y, 1));
-                archEnded = true;
-              } else
-              {
-                editing = false;
-                archSelecting = false;
-                dragging = false;
-                archStarted = false;
-                archEnded = false;
-                petri.A.remove(petri.A.size()-1);
-                print("Nem tchum\t");
-                println(petri.A.size());
-              }
-            }
+            petri.A.set(petri.A.size()-1, new Arch(t.p.x, t.p.y, t.p.x+1, t.p.y+1, 1));
+            archStarted = true;
+            isPos = false;
+            print("TchumT\t");
+            println(petri.A.size());
+          } else if (isPos && !archEnded)
+          {
+            petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, t.p.x, t.p.y, 1));
+            archEnded = true;
+            editing = false;
+            archSelecting = false;
+            dragging = false;
+          }
+          // Drop an arch point anywhere on the screen
+          else
+          {
+            editing = false;
+            archSelecting = false;
+            dragging = false;
+            archStarted = false;
+            archEnded = false;
+            if (!isPos) petri.A.remove(petri.A.size()-1);
+            print("Nem tchum\t");
+            println(petri.A.size());
           }
         }
       }
     }
   }
+}
 
-  // -------------------- NET INPUTS --------------------
-
-  // Seleção das posições após inseridas na tela
+// -------------------- NET INPUTS --------------------
+void netEvent (PVector mouse)
+{
+  // Selects positions added on the screen
   for (Position p : petri.P)
     if (p.mouseOn(mouse.x, mouse.y) && !dragging && !running)
     {
@@ -265,7 +304,7 @@ void mousePressed()
       //println(posID);
     }
 
-  // Seleção das transições após inseridas na tela
+  // Selects transitions added on the screen
   for (Transition t : petri.T)
     if (t.mouseOn(mouse.x, mouse.y) && !dragging && !running)
     {
@@ -283,15 +322,4 @@ void mousePressed()
    else
    i.selected = false;
    }*/
-}
-
-void keyPressed()
-{
-  char k = key;
-
-  if ((k == 'p' || k == 'P') && running)
-    paused = !paused;
-
-  /*for (TextBox i : tb)
-   i.write(key, (int)keyCode);*/
 }
