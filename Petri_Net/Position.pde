@@ -1,6 +1,6 @@
 class Position
 {
-  Transition[] pre_sets, post_sets;
+  //Transition[] pre_sets, post_sets;
   PVector p;
   int marks, radius = 50;
   
@@ -8,8 +8,8 @@ class Position
   {
     this.p = new PVector(x, y);
     this.marks = m;
-    this.pre_sets = new Transition[0];
-    this.post_sets = new Transition[0];
+    //this.pre_sets = new Transition[0];
+    //this.post_sets = new Transition[0];
   }
   
   public void display(boolean contour)

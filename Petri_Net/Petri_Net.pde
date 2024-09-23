@@ -18,7 +18,7 @@ boolean posSelecting, transSelecting, archSelecting;
 boolean posSelected[], transSelected[], archSelected[];
 boolean archStarted, archEnded, isPos;
 
-int posID, transID;
+int posID, transID, archID;
 
 // ======================================================================== SETUP
 
@@ -52,7 +52,7 @@ void draw()
     {
       background(200);
       ui.display();
-      petri.display(posSelected, transSelected);
+      petri.display(posSelected, transSelected, archSelected);
       fill(0);
       text("Press P to continue", width/2, height/2);
     }
@@ -62,7 +62,7 @@ void draw()
       //petri.run();
       background(200);
       ui.display();
-      petri.display(posSelected, transSelected);
+      petri.display(posSelected, transSelected, archSelected);
     }
   }
 
@@ -110,6 +110,9 @@ void draw()
         //Arch a = petri.A.get(petri.A.size()-1);
         //petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, a.end.x, a.end.y, 1));
         //}
+      } else
+      {
+        archSelected[archID] = true;
       }
     }
     // Selecting none
@@ -120,7 +123,7 @@ void draw()
 
     background(25);
     ui.display();
-    petri.display(posSelected, transSelected);
+    petri.display(posSelected, transSelected, archSelected);
   }
 
   // Idle mode (default)
@@ -128,7 +131,7 @@ void draw()
   {
     background(25);
     ui.display();
-    petri.display(posSelected, transSelected);
+    petri.display(posSelected, transSelected, archSelected);
   }
 }
 
@@ -207,6 +210,16 @@ void uiEvent (PVector mouse)
       editing = false;
       posSelecting = false;
       transSelecting = false;
+      dragging = false;
+      print("Djonga da Mironga\t");
+      println(petri.A.size());
+    }
+    else if (archSelecting && archEnded)
+    {
+      editing = false;
+      posSelecting = false;
+      transSelecting = false;
+      archSelecting = false;
       dragging = false;
       print("Djonga da Mironga\t");
       println(petri.A.size());
@@ -314,6 +327,16 @@ void netEvent (PVector mouse)
       archSelecting = false;
       transID = petri.T.indexOf(t);
       //println(transID);
+    }
+
+  // Selects arches added on the screen
+  for (Arch a : petri.A)
+    if (a.mouseOn(mouse.x, mouse.y) && !dragging && !running)
+    {
+      editing = true;
+      archSelecting = true;
+      archID = petri.A.indexOf(a);
+      println(archID);
     }
 
   /*for (TextBox i : tb) {
