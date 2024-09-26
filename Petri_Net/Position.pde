@@ -2,12 +2,13 @@ class Position
 {
   //Transition[] pre_sets, post_sets;
   PVector p;
-  int marks, radius = 50;
+  int marks, radius;
   
   Position(float x, float y, int m)
   {
     this.p = new PVector(x, y);
     this.marks = m;
+    this.radius = 25;
     //this.pre_sets = new Transition[0];
     //this.post_sets = new Transition[0];
   }
@@ -18,7 +19,11 @@ class Position
     else noStroke();
     fill(150, 0, 0);
     ellipseMode(CENTER); // default
-    circle(p.x, p.y, radius);
+    circle(p.x, p.y, 2*radius);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(40);
+    text(str(marks), p.x, p.y);
   }
   
   public void set_marks(int m)
@@ -34,7 +39,7 @@ class Position
   
   boolean mouseOn(float x, float y)
   {
-    float r = sqrt(pow(p.x - x, 2) + pow(p.y - y, 2));  // distance between points
+    float r = sqrt(sq(p.x - x) + sq(p.y - y));  // distance between points
     if (r <= radius)
       return true;
 

@@ -17,6 +17,13 @@ class Net
   
   void display(boolean[] posSelection, boolean[] transSelection, boolean[] archSelection)
   {
+    for (Arch a : A)
+    {
+      boolean selected = archSelection[A.indexOf(a)];
+      if (selected) a.display(true);
+      else a.display(false);
+    }
+    
     for (Position p : P)
     {
       boolean selected = posSelection[P.indexOf(p)];
@@ -29,13 +36,6 @@ class Net
       boolean selected = transSelection[T.indexOf(t)];
       if (selected) t.display(true);
       else t.display(false);
-    }
-    
-    for (Arch a : A)
-    {
-      boolean selected = archSelection[A.indexOf(a)];
-      if (selected) a.display(true);
-      else a.display(false);
     }
   }
   

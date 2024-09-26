@@ -1,9 +1,8 @@
 /*
  *
  * PRÓXIMOS PASSOS:
- * - adicionar e remover as marcações
- * - editar pesos
- * - fazer as posições e transições reconhecerem seus pre e pos-sets
+ * - aumentar e diminuir pesos dos arcos
+ * - fazer as transições reconhecerem seus pre e pos-sets
  * - partir para a simulação
  *
  */
@@ -105,11 +104,6 @@ void draw()
           Arch a = petri.A.get(petri.A.size()-1);
           petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, mouseX, mouseY, 1));
         }
-        //else
-        //{
-        //Arch a = petri.A.get(petri.A.size()-1);
-        //petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, a.end.x, a.end.y, 1));
-        //}
       } else
       {
         archSelected[archID] = true;
@@ -159,49 +153,21 @@ void keyPressed()
 // -------------------- UI INPUTS --------------------
 void uiEvent (PVector mouse)
 {
-  // Simulate button
-  if (ui.simulate.mouseOn(mouse.x, mouse.y) && !editing)
-  {
-    running = true;
-  }
-  // Stop button
+  if (ui.run.mouseOn(mouse.x, mouse.y))
+    runPressed();
   else if (ui.stop.mouseOn(mouse.x, mouse.y))
-  {
-    running = false;
-    paused = false;
-  }
-  // Add position button
-  else if (ui.add_pos.mouseOn(mouse.x, mouse.y) && !dragging && !running)
-  {
-    editing = true;
-    posSelecting = true;
-    transSelecting = false;
-    archSelecting = false;
-    dragging = true;
-    petri.add(new Position(mouse.x, mouse.y, 0));
-  }
-  // Add transition button
-  else if (ui.add_trans.mouseOn(mouse.x, mouse.y) && !dragging && !running)
-  {
-    editing = true;
-    posSelecting = false;
-    transSelecting = true;
-    archSelecting = false;
-    dragging = true;
-    petri.add(new Transition(mouse.x, mouse.y));
-  }
-  // Add arch button
-  else if (ui.add_arch.mouseOn(mouse.x, mouse.y) && !dragging && !running)
-  {
-    editing = true;
-    posSelecting = false;
-    transSelecting = false;
-    archSelecting = true;
-    dragging = true;
-    archStarted = false;
-    archEnded = false;
-    petri.add(new Arch(mouse.x, mouse.y, mouse.x+1, mouse.y+1, 1));
-  }
+    stopPressed();
+  else if (ui.add_pos.mouseOn(mouse.x, mouse.y))
+    addPosPressed(mouse);
+  else if (ui.add_trans.mouseOn(mouse.x, mouse.y))
+    addTransPressed(mouse);
+  else if (ui.add_arch.mouseOn(mouse.x, mouse.y))
+    addArchPressed(mouse);
+  else if (ui.add_mark.mouseOn(mouse.x, mouse.y))
+    addMarkPressed();
+  else if (ui.sub_mark.mouseOn(mouse.x, mouse.y))
+    subMarkPressed();
+
   // Anywhere on the screen
   else
   {
@@ -211,18 +177,17 @@ void uiEvent (PVector mouse)
       posSelecting = false;
       transSelecting = false;
       dragging = false;
-      print("Djonga da Mironga\t");
-      println(petri.A.size());
-    }
-    else if (archSelecting && archEnded)
+      //print("Djonga da Mironga\t");
+      //println(petri.A.size());
+    } else if (archSelecting && archEnded)
     {
       editing = false;
       posSelecting = false;
       transSelecting = false;
       archSelecting = false;
       dragging = false;
-      print("Djonga da Mironga\t");
-      println(petri.A.size());
+      //print("Djonga da Mironga\t");
+      //println(petri.A.size());
     }
     // The arch start and end points case
     else
@@ -238,8 +203,6 @@ void uiEvent (PVector mouse)
             petri.A.set(petri.A.size()-1, new Arch(p.p.x, p.p.y, p.p.x+1, p.p.y+1, 1));
             archStarted = true;
             isPos = true;
-            print("TchumP\t");
-            println(petri.A.size());
           } else if (!isPos && !archEnded)
           {
             petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, p.p.x, p.p.y, 1));
@@ -257,8 +220,7 @@ void uiEvent (PVector mouse)
             archStarted = false;
             archEnded = false;
             if (isPos) petri.A.remove(petri.A.size()-1);
-            print("Nem tchum\t");
-            println(petri.A.size());
+            println("Nem tchum\t");
           }
         }
       }
@@ -274,8 +236,6 @@ void uiEvent (PVector mouse)
             petri.A.set(petri.A.size()-1, new Arch(t.p.x, t.p.y, t.p.x+1, t.p.y+1, 1));
             archStarted = true;
             isPos = false;
-            print("TchumT\t");
-            println(petri.A.size());
           } else if (isPos && !archEnded)
           {
             petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, t.p.x, t.p.y, 1));
@@ -293,8 +253,7 @@ void uiEvent (PVector mouse)
             archStarted = false;
             archEnded = false;
             if (!isPos) petri.A.remove(petri.A.size()-1);
-            print("Nem tchum\t");
-            println(petri.A.size());
+            println("Nem tchum\t");
           }
         }
       }
@@ -314,7 +273,7 @@ void netEvent (PVector mouse)
       transSelecting = false;
       archSelecting = false;
       posID = petri.P.indexOf(p);
-      //println(posID);
+      println(posID);
     }
 
   // Selects transitions added on the screen
@@ -345,4 +304,90 @@ void netEvent (PVector mouse)
    else
    i.selected = false;
    }*/
+}
+
+// Run button
+void runPressed ()
+{
+  if (!editing)
+  {
+    running = true;
+  }
+}
+
+// Stop button
+void stopPressed ()
+{
+  running = false;
+  paused = false;
+}
+
+// Add position button
+void addPosPressed (PVector mouse)
+{
+  if (!dragging && !running)
+  {
+    editing = true;
+    posSelecting = true;
+    transSelecting = false;
+    archSelecting = false;
+    dragging = true;
+    petri.add(new Position(mouse.x, mouse.y, 0));
+  }
+}
+
+// Add transition button
+void addTransPressed (PVector mouse)
+{
+  if (!dragging && !running)
+  {
+    editing = true;
+    posSelecting = false;
+    transSelecting = true;
+    archSelecting = false;
+    dragging = true;
+    petri.add(new Transition(mouse.x, mouse.y));
+  }
+}
+
+// Add arch button
+void addArchPressed (PVector mouse)
+{
+  if (!dragging && !running)
+  {
+    editing = true;
+    posSelecting = false;
+    transSelecting = false;
+    archSelecting = true;
+    dragging = true;
+    archStarted = false;
+    archEnded = false;
+    petri.add(new Arch(mouse.x, mouse.y, mouse.x+1, mouse.y+1, 1));
+  }
+}
+
+// Add mark button
+void addMarkPressed ()
+{
+  if (!running && editing && !dragging && (archSelecting || posSelecting))
+  {
+    if (archSelecting)
+      petri.A.get(archID).weight++;
+    if (posSelecting)
+      petri.P.get(posID).marks++;
+  }
+}
+
+// Subtract mark button
+void subMarkPressed ()
+{
+  if (!running && editing && !dragging && (archSelecting || posSelecting))
+  {
+    int weight = petri.A.get(archID).weight;
+    int marks = petri.P.get(posID).marks;
+    if (archSelecting && weight > 1)
+      petri.A.get(archID).weight--;
+    if (posSelecting && marks > 0)
+      petri.P.get(posID).marks--;
+  }
 }
