@@ -1,8 +1,6 @@
 /*
  *
  * PRÓXIMOS PASSOS:
- * - aumentar e diminuir pesos dos arcos
- * - fazer as transições reconhecerem seus pre e pos-sets
  * - partir para a simulação
  *
  */
@@ -177,8 +175,6 @@ void uiEvent (PVector mouse)
       posSelecting = false;
       transSelecting = false;
       dragging = false;
-      //print("Djonga da Mironga\t");
-      //println(petri.A.size());
     } else if (archSelecting && archEnded)
     {
       editing = false;
@@ -186,24 +182,30 @@ void uiEvent (PVector mouse)
       transSelecting = false;
       archSelecting = false;
       dragging = false;
-      //print("Djonga da Mironga\t");
-      //println(petri.A.size());
     }
     // The arch start and end points case
     else
     {
+      Position pita_puta = null;
+      Transition trava = null;
+      
       // Scans positions on the screen
       for (Position p : petri.P)
       {
         if (p.mouseOn(mouse.x, mouse.y) && !running)
         {
           Arch a = petri.A.get(petri.A.size()-1);
+          petri.A.get(petri.A.size()-1).set_position(p);
+          pita_puta = p;
+          // Pre-set
           if (!archStarted)
           {
             petri.A.set(petri.A.size()-1, new Arch(p.p.x, p.p.y, p.p.x+1, p.p.y+1, 1));
             archStarted = true;
             isPos = true;
-          } else if (!isPos && !archEnded)
+          }
+          // Post-set
+          else if (!isPos && !archEnded)
           {
             petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, p.p.x, p.p.y, 1));
             archEnded = true;
@@ -231,12 +233,17 @@ void uiEvent (PVector mouse)
         if (t.mouseOn(mouse.x, mouse.y) && !running)
         {
           Arch a = petri.A.get(petri.A.size()-1);
+          petri.A.get(petri.A.size()-1).set_transition(t);
+          trava = t;
+          // Pre-set
           if (!archStarted)
           {
             petri.A.set(petri.A.size()-1, new Arch(t.p.x, t.p.y, t.p.x+1, t.p.y+1, 1));
             archStarted = true;
             isPos = false;
-          } else if (isPos && !archEnded)
+          }
+          // Post-set
+          else if (isPos && !archEnded)
           {
             petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, t.p.x, t.p.y, 1));
             archEnded = true;
@@ -257,6 +264,17 @@ void uiEvent (PVector mouse)
           }
         }
       }
+      if (trava != null)
+      {
+        int travaID = petri.T.indexOf(trava);
+        if (isPos)
+          petri.T.get(travaID).pre_sets.add(pita_puta);
+        else
+          petri.T.get(travaID).post_sets.add(pita_puta);
+          
+        println(petri.T.get(travaID).pre_sets.size());
+        println(petri.T.get(travaID).post_sets.size());
+      }
     }
   }
 }
@@ -273,7 +291,6 @@ void netEvent (PVector mouse)
       transSelecting = false;
       archSelecting = false;
       posID = petri.P.indexOf(p);
-      println(posID);
     }
 
   // Selects transitions added on the screen
@@ -285,7 +302,6 @@ void netEvent (PVector mouse)
       transSelecting = true;
       archSelecting = false;
       transID = petri.T.indexOf(t);
-      //println(transID);
     }
 
   // Selects arches added on the screen
@@ -295,7 +311,6 @@ void netEvent (PVector mouse)
       editing = true;
       archSelecting = true;
       archID = petri.A.indexOf(a);
-      println(archID);
     }
 
   /*for (TextBox i : tb) {

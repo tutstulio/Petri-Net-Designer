@@ -1,16 +1,18 @@
 class Transition
 {
-  Position[] pre_sets, post_sets;
+  ArrayList<Position> pre_sets, post_sets;
+  ArrayList<Arch> arches;
   PVector p;
   boolean trig;
   float w, h;
 
   Transition(float x, float y)
   {
+    this.pre_sets = new ArrayList<Position>();
+    this.post_sets = new ArrayList<Position>();
+    this.arches = new ArrayList<Arch>();
     this.p = new PVector(x, y);
     this.trig = false;
-    this.pre_sets = new Position[0];
-    this.post_sets = new Position[0];
     w = 10;
     h = 50;
   }

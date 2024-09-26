@@ -39,11 +39,6 @@ class Net
     }
   }
   
-  void run()
-  {
-    ;
-  }
-  
   void add(Position p)
   {
     P.add(p);
@@ -58,4 +53,37 @@ class Net
   {
     A.add(a);
   }
+  
+  void run(boolean[] transTrigged)
+  {
+    for (Transition t : T)
+    {
+      boolean trigged = transTrigged[T.indexOf(t)];
+      if (trigged)
+      {
+        for (Position pre : t.pre_sets)
+        {
+          int pre_weight = 100;
+          for (Arch a : A)
+            if (a.p == pre && a.t == t)
+              pre_weight = a.weight;
+          
+          if (pre.marks >= pre_weight)
+          {
+            pre.marks -= pre_weight;
+            for (Position post : t.post_sets)
+            {
+              int post_weight = 0;
+              for (Arch a : A)
+                if (a.p == post && a.t == t)
+                  post_weight = a.weight;
+                  
+              post.marks += post_weight;
+            }
+          }
+        }
+      }
+    }
+  }
+  
 }

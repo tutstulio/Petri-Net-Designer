@@ -1,5 +1,7 @@
 class Arch
 {
+  Position p;
+  Transition t;
   PVector start, end;
   int weight;
   float archLength;
@@ -30,6 +32,16 @@ class Arch
     text(str(weight), 0.5*(end.x + start.x), 0.5*(end.y + start.y));
     //arrow();
     //show_weight();
+  }
+
+  public void set_position(Position p)
+  {
+    this.p = p;
+  }
+  
+  public void set_transition(Transition t)
+  {
+    this.t = t;
   }
 
   public void set_weight(int w)
