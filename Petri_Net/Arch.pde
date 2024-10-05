@@ -1,9 +1,9 @@
 class Arch
 {
-  Position p;
-  Transition t;
+  //Position p;
+  //Transition t;
   PVector start, end;
-  int weight;
+  int weight, posID, transID;
   float archLength;
 
   Arch(float x0, float y0, float x1, float y1, int w)
@@ -34,15 +34,15 @@ class Arch
     //show_weight();
   }
 
-  public void set_position(Position p)
+  /*public void set_position(float x, float y, int m)
   {
-    this.p = p;
+    p = new Position(x, y, m);
   }
   
-  public void set_transition(Transition t)
+  public void set_transition(float x, float y)
   {
-    this.t = t;
-  }
+    t = new Transition(x, y);
+  }*/
 
   public void set_weight(int w)
   {

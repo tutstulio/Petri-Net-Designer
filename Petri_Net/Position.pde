@@ -1,11 +1,11 @@
 class Position
 {
-  PVector p;
+  PVector o;
   int marks, radius;
   
   Position(float x, float y, int m)
   {
-    this.p = new PVector(x, y);
+    this.o = new PVector(x, y);
     this.marks = m;
     this.radius = 25;
   }
@@ -16,11 +16,11 @@ class Position
     else noStroke();
     fill(150, 0, 0);
     ellipseMode(CENTER); // default
-    circle(p.x, p.y, 2*radius);
+    circle(o.x, o.y, 2*radius);
     fill(255);
     textAlign(CENTER, CENTER);
     textSize(40);
-    text(str(marks), p.x, p.y);
+    text(str(marks), o.x, o.y);
   }
   
   public void set_marks(int m)
@@ -30,16 +30,25 @@ class Position
   
   public void set_position(float x, float y)
   {
-    p.x = x;
-    p.y = y;
+    o.x = x;
+    o.y = y;
   }
   
   boolean mouseOn(float x, float y)
   {
-    float r = sqrt(sq(p.x - x) + sq(p.y - y));  // distance between points
+    float r = sqrt(sq(o.x - x) + sq(o.y - y));  // distance between points
     if (r <= radius)
       return true;
 
     return false;
   }
+  
+  /*@Override
+  public boolean equals (Object obj)
+  {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Position that = (Position) obj;
+    return o.x == that.o.x && o.y == that.o.y && marks == that.marks;
+  }*/
 }

@@ -4,17 +4,15 @@ class Net
   ArrayList<Transition> T;  // transitions
   ArrayList<Arch> A;        // arches
   int[] W, m0;              // weights and initial marks
-  int n, m;                 // position and transition numbers
-  
+  int posID, transID;
+
   Net()
   {
     this.P = new ArrayList<Position>();
     this.T = new ArrayList<Transition>();
     this.A = new ArrayList<Arch>();
-    n = 0;
-    m = 0;
   }
-  
+
   void display(boolean[] posSelection, boolean[] transSelection, boolean[] archSelection)
   {
     for (Arch a : A)
@@ -23,14 +21,14 @@ class Net
       if (selected) a.display(true);
       else a.display(false);
     }
-    
+
     for (Position p : P)
     {
       boolean selected = posSelection[P.indexOf(p)];
       if (selected) p.display(true);
       else p.display(false);
     }
-    
+
     for (Transition t : T)
     {
       boolean selected = transSelection[T.indexOf(t)];
@@ -38,52 +36,66 @@ class Net
       else t.display(false);
     }
   }
-  
+
   void add(Position p)
   {
     P.add(p);
   }
-  
+
   void add(Transition t)
   {
     T.add(t);
   }
-  
+
   void add(Arch a)
   {
     A.add(a);
   }
-  
+
   void run(boolean[] transTrigged)
   {
     for (Transition t : T)
     {
-      boolean trigged = transTrigged[T.indexOf(t)];
-      if (trigged)
+      transID = T.indexOf(t);
+      if (transTrigged[transID])
       {
-        for (Position pre : t.pre_sets)
+        boolean flag = true;
+        for (Position pre : t.pre_set)
         {
-          int pre_weight = 100;
+          posID = P.indexOf(pre);
           for (Arch a : A)
-            if (a.p == pre && a.t == t)
-              pre_weight = a.weight;
-          
-          if (pre.marks >= pre_weight)
+            if (a.posID == posID && a.transID == transID && pre.marks < a.weight)
+              flag = false;
+        }
+
+        if (flag)
+        {
+          for (Position pre : t.pre_set)
           {
-            pre.marks -= pre_weight;
-            for (Position post : t.post_sets)
-            {
-              int post_weight = 0;
-              for (Arch a : A)
-                if (a.p == post && a.t == t)
-                  post_weight = a.weight;
-                  
-              post.marks += post_weight;
-            }
+            posID = P.indexOf(pre);
+            println("x1:", pre.o.x, "y1:", pre.o.y);
+            for (Arch a : A)
+              //println(a.posID);
+              if (a.posID == posID && a.transID == transID)
+                //println(a.posID);
+                P.get(posID).marks -= a.weight;  // só fica no primeiro posID
           }
+          for (Position post : t.post_set)
+          {
+            posID = P.indexOf(post);
+            println("x2:", post.o.x, "y2:", post.o.y);
+            for (Arch a : A)
+              //println(a.posID);
+              if (a.posID == posID && a.transID == transID)
+                //println(a.posID);
+                P.get(posID).marks += a.weight;
+          }
+        }
+        else
+        {
+          println("YOU GAY???");
         }
       }
     }
   }
-  
 }
