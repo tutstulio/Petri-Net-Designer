@@ -67,16 +67,6 @@ class Arch
     }
   }
 
-  /*public void set_position(float x, float y, int m)
-  {
-    p = new Position(x, y, m);
-  }
-  
-  public void set_transition(float x, float y)
-  {
-    t = new Transition(x, y);
-  }*/
-
   public void set_weight(int w)
   {
     weight = w;
@@ -88,7 +78,6 @@ class Arch
     float y0 = end.y - end.x * y_dot;
     float d = abs(y_dot * x - y + y0) / sqrt(sq(y_dot) + 1);  // distance between mouse and line
 
-    //float archLength = sqrt(sq(end.x - start.x) + sq(end.y - start.y));
     float startRadius = sqrt(sq(start.x - x) + sq(start.y - y));
     float endRadius = sqrt(sq(end.x - x) + sq(end.y - y));
 

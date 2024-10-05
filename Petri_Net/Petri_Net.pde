@@ -1,16 +1,9 @@
-/*
- *
- * PRÓXIMOS PASSOS:
- * - 
- * - 
- *
- */
-
 // ======================================================================== MAIN DATA
 
 UserInterface ui;
 Net petri;
 
+// Flags
 boolean running, paused, editing, dragging;
 boolean posSelecting, transSelecting, archSelecting;
 boolean posSelected[], transSelected[], archSelected[];
@@ -58,6 +51,8 @@ void draw()
       ui.display();
       petri.display(posSelected, transSelected, archSelected);
       fill(0);
+      textSize(40);
+      textAlign(CENTER, CENTER);
       text("Press P to continue", width/2, height/2);
     }
     // Running simulation
@@ -146,8 +141,18 @@ void mousePressed()
   // Get mouse coordinates
   PVector mouse = new PVector(mouseX, mouseY);
   if (!uiEvent(mouse))
-    if (!screenEvent())
-      netEvent(mouse);
+  {
+    if (archSelecting && dragging)
+    {
+      if (!netEvent(mouse))
+        screenEvent();
+    }
+    else
+    {
+      if (!screenEvent())
+        netEvent(mouse);
+    }
+  }
 }
 
 void keyPressed()
@@ -183,14 +188,15 @@ boolean uiEvent (PVector mouse)
 }
 
 // -------------------- NET INPUTS --------------------
-void netEvent (PVector mouse)
+boolean netEvent (PVector mouse)
 {
-  //boolean flag = true;
-
+  boolean flag = false;
+  
   // Selects positions added on the screen
   for (Position p : petri.P)
     if (p.mouseOn(mouse.x, mouse.y) && !running)
     {
+      flag = true;
       posID = petri.P.indexOf(p);
       if (dragging && !posSelecting)
       {
@@ -233,6 +239,7 @@ void netEvent (PVector mouse)
   for (Transition t : petri.T)
     if (t.mouseOn(mouse.x, mouse.y))
     {
+      flag = true;
       transID = petri.T.indexOf(t);
       if (dragging && !transSelecting)
       {
@@ -280,29 +287,40 @@ void netEvent (PVector mouse)
   {
     if (a.mouseOn(mouse.x, mouse.y) && !dragging && !running)
     {
+      flag = true;
       editing = true;
       archSelecting = true;
       archID = petri.A.indexOf(a);
     }
   }
-
-  //return flag;
+  
+  return flag;
 }
 
 // -------------------- ANYWHERE --------------------
 boolean screenEvent ()
 {
   boolean flag = false;
-  
+
   if (archSelecting)
   {
     // Arch start and end case
     if (!archStarted)
     {
-      ;
+      archStarted = false;
+      archEnded = false;
+      dragging = false;
+      archSelecting = false;
+      editing = false;
+      petri.A.remove(petri.A.size()-1);
     } else if (!archEnded)
     {
-      ;
+      archStarted = false;
+      archEnded = false;
+      dragging = false;
+      archSelecting = false;
+      editing = false;
+      petri.A.remove(petri.A.size()-1);
     }
     // Arch completly drawn
     else
@@ -323,7 +341,7 @@ boolean screenEvent ()
     transSelecting = false;
     editing = false;
   }
-  
+
   return flag;
 }
 

@@ -30,12 +30,6 @@ class Transition
   {
     trig = true;
   }
-
-  /*public void set_position(float x, float y)
-  {
-    o.x = x;
-    o.y = y;
-  }*/
   
   boolean mouseOn(float x, float y)
   {
