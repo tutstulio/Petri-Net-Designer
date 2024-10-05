@@ -1,8 +1,8 @@
 /*
  *
  * PRÓXIMOS PASSOS:
- * - partir para a simulação
- * - ajustar função run
+ * - 
+ * - 
  *
  */
 
@@ -194,7 +194,7 @@ void netEvent (PVector mouse)
       posID = petri.P.indexOf(p);
       if (dragging && !posSelecting)
       {
-        if (!archStarted)  // ta fidjidjo
+        if (!archStarted)
         {
           petri.A.set(petri.A.size()-1, new Arch(p.o.x, p.o.y, mouse.x, mouse.y, 1));
           archStarted = true;
@@ -241,7 +241,7 @@ void netEvent (PVector mouse)
           petri.A.set(petri.A.size()-1, new Arch(t.o.x, t.o.y, mouse.x, mouse.y, 1));
           archStarted = true;
           isPos = false;
-        } else if (!archEnded && isPos)  // ta pôdji
+        } else if (!archEnded && isPos)
         {
           Arch a = petri.A.get(petri.A.size()-1);
           petri.A.set(petri.A.size()-1, new Arch(a.start.x, a.start.y, t.o.x, t.o.y, 1));

@@ -1,7 +1,7 @@
 class Transition
 {
   ArrayList<Position> pre_set, post_set;
-  int[] pre_weights, post_weights;  // testar essa pora
+  int[] pre_weights, post_weights;
   PVector o;
   boolean trig;
   float w, h;
@@ -20,6 +20,7 @@ class Transition
   {
     if (contour) stroke(0, 255, 0);
     else noStroke();
+    strokeWeight(2);
     fill(255);
     rectMode(CENTER);
     rect(o.x, o.y, w, h);

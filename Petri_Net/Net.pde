@@ -75,19 +75,15 @@ class Net
             posID = P.indexOf(pre);
             println("x1:", pre.o.x, "y1:", pre.o.y);
             for (Arch a : A)
-              //println(a.posID);
               if (a.posID == posID && a.transID == transID)
-                //println(a.posID);
-                P.get(posID).marks -= a.weight;  // só fica no primeiro posID
+                P.get(posID).marks -= a.weight;
           }
           for (Position post : t.post_set)
           {
             posID = P.indexOf(post);
             println("x2:", post.o.x, "y2:", post.o.y);
             for (Arch a : A)
-              //println(a.posID);
               if (a.posID == posID && a.transID == transID)
-                //println(a.posID);
                 P.get(posID).marks += a.weight;
           }
         }

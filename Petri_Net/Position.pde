@@ -14,6 +14,7 @@ class Position
   {
     if (contour) stroke(0, 255, 0);
     else noStroke();
+    strokeWeight(2);
     fill(150, 0, 0);
     ellipseMode(CENTER); // default
     circle(o.x, o.y, 2*radius);

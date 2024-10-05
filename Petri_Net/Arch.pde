@@ -1,10 +1,8 @@
 class Arch
 {
-  //Position p;
-  //Transition t;
   PVector start, end;
   int weight, posID, transID;
-  float archLength;
+  float archLength, archAngle;
 
   Arch(float x0, float y0, float x1, float y1, int w)
   {
@@ -12,6 +10,7 @@ class Arch
     this.end = new PVector(x1, y1);
     this.weight = w;
     this.archLength = sqrt(sq(this.end.x - this.start.x) + sq(this.end.y - this.start.y));
+    this.archAngle = atan((this.end.y - this.start.y) / (this.end.x - this.start.x));
   }
 
   public void display (boolean contour)
@@ -27,11 +26,45 @@ class Arch
     }
     strokeWeight(2);
     line(start.x, start.y, end.x, end.y);
+    showArrow();
+    showWeight();
+  }
+  
+  private void showWeight ()
+  {
+    float weightOffset = 0.4 * archLength;
     textAlign(CENTER, BOTTOM);
-    textSize(20);
-    text(str(weight), 0.5*(end.x + start.x), 0.5*(end.y + start.y));
-    //arrow();
-    //show_weight();
+    textSize(22);
+    if (end.x - start.x >= 0)
+      text(str(weight), start.x + weightOffset*cos(archAngle), start.y + weightOffset*sin(archAngle));
+    else
+      text(str(weight), start.x - weightOffset*cos(archAngle), start.y - weightOffset*sin(archAngle));
+  }
+  
+  private void showArrow ()
+  {
+    float arrowLength, arrowAngle, arrowOffset, theta;
+    if (archLength <= 150) arrowOffset = 0.5 * archLength;
+    else arrowOffset = 0.625 * archLength;
+    arrowLength = 18;
+    arrowAngle = radians(15);
+    theta = atan((arrowLength*tan(arrowAngle)) / arrowOffset);
+    strokeWeight(1);
+    if (end.x - start.x >= 0)
+    {
+      beginShape(TRIANGLES);
+      vertex(start.x + arrowOffset*cos(archAngle+theta), start.y + arrowOffset*sin(archAngle+theta));
+      vertex(start.x + arrowOffset*cos(archAngle-theta), start.y + arrowOffset*sin(archAngle-theta));
+      vertex(start.x + (arrowOffset+arrowLength)*cos(archAngle), start.y + (arrowOffset+arrowLength)*sin(archAngle));
+      endShape();
+    } else
+    {
+      beginShape(TRIANGLES);
+      vertex(start.x - arrowOffset*cos(archAngle+theta), start.y - arrowOffset*sin(archAngle+theta));
+      vertex(start.x - arrowOffset*cos(archAngle-theta), start.y - arrowOffset*sin(archAngle-theta));
+      vertex(start.x - (arrowOffset+arrowLength)*cos(archAngle), start.y - (arrowOffset+arrowLength)*sin(archAngle));
+      endShape();
+    }
   }
 
   /*public void set_position(float x, float y, int m)
